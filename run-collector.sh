@@ -27,10 +27,6 @@ fi
 : "${DYNATRACE_API_TOKEN:?Set DYNATRACE_API_TOKEN in your shell}"
 : "${DYNATRACE_TENANT_URL:?Set DYNATRACE_TENANT_URL in your shell (https://<your-tenant>.live.dynatrace.com)}"
 
-# Export for collector to use
-export DYNATRACE_API_TOKEN
-export DYNATRACE_TENANT_URL
-
 echo "Starting OpenTelemetry Collector (contrib) with config.yaml..."
 exec "$OTELCOL_BIN" --config "$ROOT_DIR/config.yaml"
 
