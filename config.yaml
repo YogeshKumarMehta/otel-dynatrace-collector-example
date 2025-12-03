@@ -1,0 +1,36 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "python-app"
+          static_configs:
+            - targets: ["localhost:8000"]
+          metrics_path: /metrics
+          scrape_interval: 5s
+
+exporters:
+  # Send metrics to Dynatrace via OTLP HTTP endpoint
+  # Correct Dynatrace endpoint format: https://{environment-id}.live.dynatrace.com
+  otlphttp:
+    endpoint: "https://wby64806.live.dynatrace.com/api/v2/otlp"
+    headers:
+      "Authorization": "Api-Token ${DYNATRACE_API_TOKEN}"
+    compression: gzip
+
+  # Debug exporter for debugging (logs to stdout)
+  debug:
+    verbosity: detailed
+  # Prometheus exporter to expose the collector's own metrics (choose a port)
+  prometheus:
+    endpoint: "0.0.0.0:8888"
+
+processors:
+  batch:
+    timeout: 10s
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: [batch]
+      exporters: [otlphttp, debug]
