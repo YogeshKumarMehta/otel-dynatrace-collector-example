@@ -18,7 +18,7 @@ export DYNATRACE_TENANT_URL="https://<your-tenant>.live.dynatrace.com"
 ```
 
 **Where to find:**
-- **API Token**: Settings → API tokens → Create new token
+- **Access Token**: Settings → Access tokens → Create new token
   - **Required scope:**
     - ✅ Ingest metrics (`metrics.ingest`) - REQUIRED for this project
   - **Optional scopes** (only if sending logs/traces):
@@ -228,9 +228,13 @@ sleep 2
 ## ✨ What Makes This Work
 
 ✅ **OTLP HTTP** - Standard, widely-supported OTel exporter
+
 ✅ **Prometheus Format** - Python app uses industry-standard Prometheus metrics
+
 ✅ **Batch Processing** - Efficient metric batching before export
+
 ✅ **Custom Labels** - Host and environment metadata included
+
 ✅ **Auto-Discovery** - Dynatrace automatically maps OTLP signals to metrics
 
 ## 📚 References
