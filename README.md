@@ -61,18 +61,91 @@ The Python app exposes these Prometheus metrics:
 - `host` - Hostname (e.g., "my-laptop")
 - `env` - Environment (e.g., "dev")
 
-## 🛠️ Architecture
+## � Verify Metrics Are Flowing
+
+### Step 1: Check Python App Exports Metrics
+
+```bash
+# From your local machine, check the Python app is exposing metrics
+curl -s http://localhost:8000/metrics | grep -E "system_memory_used_bytes|system_cpu_usage_percent|system_disk_free_bytes"
+```
+
+**Expected output** (see `assets/01-python-app-metrics.png`):
+```prometheus
+# HELP system_cpu_usage_percent System CPU usage percentage (0-100)
+# TYPE system_cpu_usage_percent gauge
+system_cpu_usage_percent{env="dev",host="Yogesh-LAPTOP"} 2.9
+
+# HELP system_memory_used_bytes System memory used in bytes
+# TYPE system_memory_used_bytes gauge
+system_memory_used_bytes{env="dev",host="Yogesh-LAPTOP"} 5.35e+09
+
+# HELP system_disk_free_bytes System disk free space in bytes (root)
+# TYPE system_disk_free_bytes gauge
+system_disk_free_bytes{env="dev",host="Yogesh-LAPTOP"} 1.02e+12
+```
+
+### Step 2: View in Dynatrace Metrics Browser
+
+Once metrics are flowing to Dynatrace, use these DQL queries to visualize:
+
+**Query 1: System Memory Used**
+```
+system_memory_used_bytes:splitBy(env,host,"dt.metrics.source","service.name","service.instance.id"):sort(value(auto,descending)):limit(20)
+```
+
+**Query 2: CPU Usage**
+```
+system_cpu_usage_percent:splitBy(env,host,"dt.metrics.source","service.name","service.instance.id"):sort(value(auto,descending)):limit(20)
+```
+
+**Query 3: Disk Free Space**
+```
+system_disk_free_bytes:splitBy(env,host,"dt.metrics.source","service.name","service.instance.id"):sort(value(auto,descending)):limit(20)
+```
+
+**Expected result** (see `assets/02-dynatrace-metrics-browser.png`):
+- Metrics appear with your custom labels (host, env)
+- Data points update every 5 seconds
+- All 3 metrics visible in Metrics Browser
+
+---
+
+## 📸 Screenshots
+
+### Screenshot 1: Python App Metrics
+```bash
+# Run this command in terminal
+curl -s http://localhost:8000/metrics | grep -E "system_memory_used_bytes|system_cpu_usage_percent|system_disk_free_bytes"
+```
+![Python App Metrics](assets/01-python-app-metrics.png)
+*Terminal output showing Prometheus metrics from the Python Flask app*
+
+### Screenshot 2: Dynatrace Metrics Browser
+![Dynatrace Metrics Browser](assets/02-dynatrace-metrics-browser.png)
+*System metrics visible in the Dynatrace Metrics Browser dashboard*
+
+**Query used:**
+```
+system_cpu_usage_percent:splitBy(env,host,"dt.metrics.source","service.name","service.instance.id"):sort(value(auto,descending)):limit(20)
+```
+
+---
+
+## �🛠️ Architecture
 
 ```
 Python Flask App (localhost:8000/metrics)
-         ↓
+         ↓ (5-second scrape via HTTP GET)
 OpenTelemetry Collector Contrib
          ↓
-    Batch Processor
+    Batch Processor (10s timeout)
          ↓
     OTLP HTTP Exporter
          ↓
-Dynatrace SaaS (<your-tenant>.live.dynatrace.com)
+Dynatrace SaaS API (/api/v2/otlp)
+         ↓
+Metrics Browser (visible & queryable)
 ```
 
 ## 📝 Configuration Files

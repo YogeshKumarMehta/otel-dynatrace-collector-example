@@ -1,8 +1,8 @@
-# Dynatrace API Token Setup Guide
+# Dynatrace Access Token Setup Guide
 
-## Creating Your API Token
+## Creating Your Access Token
 
-This guide walks you through creating a Dynatrace API token with the correct scopes for OpenTelemetry metrics ingestion.
+This guide walks you through creating a Dynatrace access token with the correct scopes for OpenTelemetry metrics ingestion.
 
 ## Step-by-Step Instructions
 
@@ -11,10 +11,10 @@ This guide walks you through creating a Dynatrace API token with the correct sco
 1. Go to: `https://<your-tenant>.live.dynatrace.com`
 2. Log in with your credentials
 
-### 2. Navigate to API Tokens
+### 2. Navigate to Access Tokens
 
 1. Click **Settings** (gear icon in top right)
-2. Select **API tokens** from the left menu
+2. Select **Access tokens** from the left menu
 3. Click **Create new token** button
 
 ### 3. Configure Your Token
@@ -145,7 +145,7 @@ If you get a `400` or `401` error:
 - Wrong API token
 - Insufficient permissions
 
-## Security Best Practices
+**Security Best Practices**
 
 1. **Never commit tokens to Git**
    - Use `.env` (which is in `.gitignore`)
